@@ -22,6 +22,7 @@ package quickfix.examples.banzai.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 
 import quickfix.examples.banzai.*;
 
@@ -94,13 +95,12 @@ public class CancelReplacePanel extends JPanel {
         if (order == null)
             return;
         this.order = order;
-        quantityTextField.setText
-        (Integer.toString(order.getOpen()));
+        quantityTextField.setText(order.getOpen());
 
-        Double limit = order.getLimit();
+        String limit = order.getLimit();
         if (limit != null)
             limitPriceTextField.setText(order.getLimit().toString());
-        setEnabled(order.getOpen() > 0);
+        setEnabled(new BigDecimal(order.getOpen()).doubleValue() > 0);
     }
 
     private JComponent add(JComponent component, int x, int y) {
@@ -119,13 +119,12 @@ public class CancelReplacePanel extends JPanel {
     private class ReplaceListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Order newOrder = (Order) order.clone();
-            newOrder.setQuantity
-            (Integer.parseInt(quantityTextField.getText()));
-            newOrder.setLimit(Double.parseDouble(limitPriceTextField.getText()));
+            newOrder.setQuantity(quantityTextField.getText());
+            newOrder.setLimit(limitPriceTextField.getText());
             newOrder.setRejected(false);
             newOrder.setCanceled(false);
-            newOrder.setOpen(0);
-            newOrder.setExecuted(0);
+            newOrder.setOpen("0");
+            newOrder.setExecuted("0");
 
             application.replace(order, newOrder);
         }

@@ -21,18 +21,21 @@ package quickfix.examples.banzai;
 
 import quickfix.SessionID;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Order implements Cloneable {
     private SessionID sessionID = null;
     private String symbol = null;
-    private int quantity = 0;
-    private int open = 0;
-    private int executed = 0;
+    private String quantity = null;
+    private String open = null;
+    private String executed = null;
     private OrderSide side = OrderSide.BUY;
     private OrderType type = OrderType.MARKET;
     private OrderTIF tif = OrderTIF.DAY;
-    private Double limit = null;
-    private Double stop = null;
-    private double avgPx = 0.0;
+    private String limit = null;
+    private String stop = null;
+    private String avgPx = null;
     private boolean rejected = false;
     private boolean canceled = false;
     private boolean isNew = true;
@@ -40,6 +43,7 @@ public class Order implements Cloneable {
     private String ID = null;
     private String originalID = null;
     private static int nextID = 1;
+    private Map<Integer, String> data = new HashMap<>();
 
     public Order() {
         ID = generateID();
@@ -79,27 +83,27 @@ public class Order implements Cloneable {
         this.symbol = symbol;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 
-    public int getOpen() {
+    public String getOpen() {
         return open;
     }
 
-    public void setOpen(int open) {
+    public void setOpen(String open) {
         this.open = open;
     }
 
-    public int getExecuted() {
+    public String getExecuted() {
         return executed;
     }
 
-    public void setExecuted(int executed) {
+    public void setExecuted(String executed) {
         this.executed = executed;
     }
 
@@ -127,43 +131,28 @@ public class Order implements Cloneable {
         this.tif = tif;
     }
 
-    public Double getLimit() {
+    public String getLimit() {
         return limit;
     }
 
-    public void setLimit(Double limit) {
+    public void setLimit(String limit) {
         this.limit = limit;
     }
 
-    public void setLimit(String limit) {
-        if (limit == null || limit.equals("")) {
-            this.limit = null;
-        } else {
-            this.limit = Double.parseDouble(limit);
-        }
-    }
-
-    public Double getStop() {
+    public String getStop() {
         return stop;
     }
 
-    public void setStop(Double stop) {
+    public void setStop(String stop) {
         this.stop = stop;
     }
 
-    public void setStop(String stop) {
-        if (stop == null || stop.equals("")) {
-            this.stop = null;
-        } else {
-            this.stop = Double.parseDouble(stop);
-        }
-    }
 
-    public void setAvgPx(double avgPx) {
+    public void setAvgPx(String avgPx) {
         this.avgPx = avgPx;
     }
 
-    public double getAvgPx() {
+    public String getAvgPx() {
         return avgPx;
     }
 
@@ -213,5 +202,13 @@ public class Order implements Cloneable {
 
     public String getOriginalID() {
         return originalID;
+    }
+
+    public Map<Integer, String> getData() {
+        return data;
+    }
+
+    public void setData(Map<Integer, String> data) {
+        this.data = data;
     }
 }

@@ -30,6 +30,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -77,6 +79,9 @@ public class OrderEntryPanel extends JPanel implements Observer {
     private final JLabel messageLabel = new JLabel(" ");
     private final JButton submitButton = new JButton("Submit");
 
+    private final JLabel extraField = new JLabel("Extra");
+    private final JTextField extraFieldText = new JTextField();
+
     private OrderTableModel orderTableModel = null;
     private transient BanzaiApplication application = null;
 
@@ -91,11 +96,7 @@ public class OrderEntryPanel extends JPanel implements Observer {
         application.addLogonObserver(this);
 
         SubmitActivator activator = new SubmitActivator();
-        symbolTextField.addKeyListener(activator);
-        quantityTextField.addKeyListener(activator);
-        limitPriceTextField.addKeyListener(activator);
-        stopPriceTextField.addKeyListener(activator);
-        sessionComboBox.addItemListener(activator);
+        extraFieldText.addKeyListener(activator);
 
         setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         setLayout(new GridBagLayout());
@@ -130,6 +131,7 @@ public class OrderEntryPanel extends JPanel implements Observer {
         constraints.ipadx = 30;
         add(limitPriceLabel, ++x, y);
         add(stopPriceLabel, ++x, y);
+        add(extraField, ++x, y);
         constraints.ipadx = 0;
         add(new JLabel("TIF"), ++x, y);
         constraints.ipadx = 30;
@@ -147,6 +149,7 @@ public class OrderEntryPanel extends JPanel implements Observer {
         add(limitPriceTextField, ++x, y);
         stopPriceTextField.setName("StopPriceTextField");
         add(stopPriceTextField, ++x, y);
+        add(extraFieldText, ++x, y);
         tifComboBox.setName("TifComboBox");
         add(tifComboBox, ++x, y);
 
@@ -181,17 +184,7 @@ public class OrderEntryPanel extends JPanel implements Observer {
     }
 
     private void activateSubmit() {
-        OrderType type = (OrderType) typeComboBox.getSelectedItem();
-        boolean activate = symbolEntered && quantityEntered && sessionEntered;
-
-        if (type == OrderType.MARKET)
-            submitButton.setEnabled(activate);
-        else if (type == OrderType.LIMIT)
-            submitButton.setEnabled(activate && limitEntered);
-        else if (type == OrderType.STOP)
-            submitButton.setEnabled(activate && stopEntered);
-        else if (type == OrderType.STOP_LIMIT)
-            submitButton.setEnabled(activate && limitEntered && stopEntered);
+        submitButton.setEnabled(true);
     }
 
     private class PriceListener implements ItemListener {
@@ -246,8 +239,17 @@ public class OrderEntryPanel extends JPanel implements Observer {
             order.setTIF((OrderTIF) tifComboBox.getSelectedItem());
 
             order.setSymbol(symbolTextField.getText());
-            order.setQuantity(Integer.parseInt(quantityTextField.getText()));
+            order.setQuantity(quantityTextField.getText());
             order.setOpen(order.getQuantity());
+            String text= extraFieldText.getText();
+            String[] args = text.split(";");
+            Map<Integer,String> dataMap = new HashMap<>();
+            for(int i=0;i<args.length;i++){
+                String[] data = args[i].split("=");
+                dataMap.put(Integer.parseInt(data[0]), data[1]);
+            }
+
+            order.setData(dataMap);
 
             OrderType type = order.getType();
             if (type == OrderType.LIMIT || type == OrderType.STOP_LIMIT)
